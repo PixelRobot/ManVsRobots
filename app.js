@@ -1143,15 +1143,6 @@ function runGame() {
 	}
 
 	function start() {
-		img.src = 'sprites.png';
-		txt.src = 'text.png';
-		lettering.src = 'lettering.png';
-		cheer.src = 'cheer.mp3';
-		crash.src = 'crash.mp3'; 
-		scream.src = 'scream.mp3';
-		servo.src = 'servo.mp3';
-		teleport.src = 'teleport.mp3';
-		walk.src = 'walk.mp3';
 		img.onload = function() {loader()}; 
 		txt.onload = function() {loader()};
 		lettering.onload = function() {loader()};
@@ -1161,6 +1152,15 @@ function runGame() {
 		servo.onloadeddata = function() {loader()};
 		teleport.onloadeddata = function() {loader()};
 		walk.onloadeddata = function() {loader()};
+		img.src = 'sprites.png';
+		txt.src = 'text.png';
+		lettering.src = 'lettering.png';
+		cheer.src = 'cheer.mp3';
+		crash.src = 'crash.mp3'; 
+		scream.src = 'scream.mp3';
+		servo.src = 'servo.mp3';
+		teleport.src = 'teleport.mp3';
+		walk.src = 'walk.mp3';
 		state = 'PLAYING';
 	}
 
