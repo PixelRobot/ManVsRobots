@@ -17,7 +17,6 @@ function runGame() {
 	var teleport = new Audio();
 	var walk = new Audio();
 	//Estado
-	var state = null;
 	var status = null;
 	//Número de elementos externos a cargar
 	var load = 9;
@@ -174,7 +173,6 @@ function runGame() {
 					crashes.list.push(robots.list[i]);
 				}
 				if (man.x == robots.list[i].x && man.y == robots.list[i].y ) {
-					state = 'DEAD';
 					console.info('YOU ARE DEAD');
 					if (soundSwitch) scream.play();
 					for (var j = i; j < robots.list.length; j++) {
@@ -184,8 +182,7 @@ function runGame() {
 				}
 			}
 			robots.list = survivors;
-			if (robots.list.length == 0 && state != 'DEAD') {
-				state = 'VICTORY';
+			if (robots.list.length == 0 && status.id != "dead") {
 				console.info('YOU WON');
 				if (soundSwitch) cheer.play();
 			}
@@ -1161,7 +1158,6 @@ function runGame() {
 		servo.src = 'servo.mp3';
 		teleport.src = 'teleport.mp3';
 		walk.src = 'walk.mp3';
-		state = 'PLAYING';
 	}
 
 	function drawLoader() {
@@ -1215,7 +1211,7 @@ function runGame() {
 	var msPerFrame = 50;
 
 	window.requestAnimFrame = (function() {
-		return  window.requestAnimationFrame		||
+		return  window.requestAnimationFrame			||
 				window.webkitRequestAnimationFrame	||
 				window.mozRequestAnimationFrame		||
 				window.oRequestAnimationFrame		||
