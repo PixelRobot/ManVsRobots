@@ -495,9 +495,9 @@ function runGame() {
 	}
 
 	var version = {
-		readx: 246,
+		readx: 242,
 		ready: 309,
-		width: 18,
+		width: 22,
 		height: 10,
 		offsetx: 145,
 		offsety: 35,
