@@ -118,8 +118,8 @@ function runGame() {
 
 	window.addEventListener('keydown', function(event) {
 		mhover = false;
+		var keyPressed = event.keyCode;
 		if (status.id == 'playing' && blockInput == false) {
-			var keyPressed = event.keyCode;
 			switch(keyPressed) {
 				case 35:
 				case 97:
@@ -182,6 +182,9 @@ function runGame() {
 			if (x > -1 && y > -1 && x <= board.m && y <= board.n && emptySquare(x, y)) {
 				status = stateMoving.init(x, y);
 			}
+		} else if (status.id == 'menu' && keyPressed == 13) {
+			level = 0;
+			status = stateBegin.init();
 		}
 	}, false);
 
@@ -954,9 +957,9 @@ function runGame() {
 		}, 
 		transit: function() {
 			if (this.frame > 6) {
-				var crshl = crashes.list.length;
+				var crshl = robots.list.length;
 				board.collisions();
-				if (crshl != crashes.list.length) {
+				if (crshl != robots.list.length) {
 					if (soundSwitch) crash.play();
 				}
 				if (!emptySquare(man.x, man.y)) {
@@ -1300,7 +1303,7 @@ function runGame() {
 		if (acDelta > msPerFrame) {
 			acDelta = 0;
 			status.run();
-			//console.info(status.id);
+			console.info(status.id);
 		} else {
 			acDelta += delta;
 		}
