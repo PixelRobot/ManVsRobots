@@ -17,6 +17,7 @@ function runGame() {
 	var teleport = new Audio();
 	var walk = new Audio();
 	//Estado
+	var state = null;
 	var status = null;
 	//Número de elementos externos a cargar
 	var load = 9;
@@ -59,36 +60,32 @@ function runGame() {
 	}
 
 	//Input
-	function getMousePos(canvas, evt) {
+	function getMousePos(canvas, event) {
 		var rect = canvas.getBoundingClientRect();
 		return {
-			x: Math.floor(evt.clientX - rect.left),
-			y: Math.floor(evt.clientY - rect.top)
+			x: Math.floor(event.clientX - rect.left),
+			y: Math.floor(event.clientY - rect.top)
 		};
 	}
 
-	myCanvas.addEventListener('click', function(evt) {
+	myCanvas.addEventListener('click', function(event) {
 		mhover = false;
-		var pos = getMousePos(myCanvas, evt);
+		var pos = getMousePos(myCanvas, event);
 		if (status.id == 'playing') {
 			clickX = Math.floor(pos.x / board.square);
 			clickY = Math.floor(pos.y / board.square);
 			if (legalMove(clickX, clickY)) {
 				if (man.x != clickX || man.y != clickY) {
-					man.move(clickX, clickY);
 					if (blockInput == false) {
-						blockInput = true;
-						status = stateMoving.init();
+						status = stateMoving.init(clickX, clickY);
 					} else {
-						console.warn("Input blocked");
+						//console.warn("Input blocked");
 					}
 				} else {
-					man.teleport();
 					if (blockInput == false) {
-						blockInput = true;
 						status = stateTeleporting.init();
 					} else {
-						console.warn("Input blocked");
+						//console.warn("Input blocked");
 					}
 				}
 			}
@@ -116,6 +113,75 @@ function runGame() {
 					}
 				}
 			} 
+		}
+	}, false);
+
+	window.addEventListener('keydown', function(event) {
+		mhover = false;
+		if (status.id == 'playing' && blockInput == false) {
+			var keyPressed = event.keyCode;
+			switch(keyPressed) {
+				case 35:
+				case 97:
+						console.info("DOWNLEFT");
+						var mx = -1;
+						var my = 1;
+						break;
+				case 40:
+				case 98:
+						console.info("DOWN");
+						var mx = 0;
+						var my = 1;
+						break;
+				case 34:
+				case 99:
+						console.info("DOWNRIGHT");
+						var mx = 1;
+						var my = 1;
+						break;
+				case 37:
+				case 100:
+						console.info("LEFT");
+						var mx = -1;
+						var my = 0;
+						break;
+				case 12:
+				case 101:
+						console.info("TELEPORT");
+						status = stateTeleporting.init();
+						return (0);
+						break;
+				case 39:
+				case 102:
+						console.info("RIGHT");
+						var mx = 1;
+						var my = 0;
+						break;
+				case 36:
+				case 103:
+						console.info("UPLEFT");
+						var mx = -1;
+						var my = -1;
+						break;
+				case 38:
+				case 104:
+						console.info("UP");
+						var mx = 0;
+						var my = -1;
+						break;
+				case 33:
+				case 105:
+						console.info("UPRIGHT");
+						var mx = 1;
+						var my = -1;
+						break;
+			}
+			var x = man.x + mx;
+			var y = man.y + my;
+			console.info(x + ";" + y);
+			if (x > -1 && y > -1 && x <= board.m && y <= board.n && emptySquare(x, y)) {
+				status = stateMoving.init(x, y);
+			}
 		}
 	}, false);
 
@@ -173,7 +239,8 @@ function runGame() {
 					crashes.list.push(robots.list[i]);
 				}
 				if (man.x == robots.list[i].x && man.y == robots.list[i].y ) {
-					console.info('YOU ARE DEAD');
+					state = 'DEAD';
+					//console.info('YOU ARE DEAD');
 					if (soundSwitch) scream.play();
 					for (var j = i; j < robots.list.length; j++) {
 						survivors.push(robots.list[j]);
@@ -182,8 +249,9 @@ function runGame() {
 				}
 			}
 			robots.list = survivors;
-			if (robots.list.length == 0 && status.id != "dead") {
-				console.info('YOU WON');
+			if (robots.list.length == 0 && state != 'DEAD') {
+				state = 'VICTORY';
+				//console.info('YOU WON');
 				if (soundSwitch) cheer.play();
 			}
 		}
@@ -287,8 +355,8 @@ function runGame() {
 		}
 	}
 
-	myCanvas.addEventListener('mousemove', function(evt) {
-		mousePos = getMousePos(myCanvas, evt);
+	myCanvas.addEventListener('mousemove', function(event) {
+		mousePos = getMousePos(myCanvas, event);
 		mx = mousePos.x;
 		my = mousePos.y;
 		msx = Math.floor(mousePos.x / board.square);
@@ -325,7 +393,7 @@ function runGame() {
 	}, false);
 
 	function drawCursor() {
-		console.log(mx+"|"+my);
+		//console.log(mx+"|"+my);
 		if (mhover == false) {
 			painter.pieceCart(mx, my, cursor);
 		} else {
@@ -782,7 +850,9 @@ function runGame() {
 	var stateMoving = {
 		id: "moving",
 		frame: 0,
-		init: function() {
+		init: function(x, y) {
+			blockInput = true;
+			man.move(x, y);
 			if (soundSwitch) walk.play();
 			this.frame = 0;
 			return this;
@@ -819,6 +889,8 @@ function runGame() {
 		id: "teleporting",
 		frame: 0,
 		init: function() {
+			blockInput = true;
+			man.teleport();
 			if (soundSwitch) teleport.play();
 			this.frame = 1;
 			return this;
@@ -907,7 +979,7 @@ function runGame() {
 		id: "dead",
 		frame: 1,
 		init: function() {
-			console.warn("YOU ARE DEAD");
+			//console.warn("YOU ARE DEAD");
 			if (soundSwitch) scream.play();
 			this.frame = 1;
 			return this;
@@ -1140,15 +1212,6 @@ function runGame() {
 	}
 
 	function start() {
-		img.onload = function() {loader()}; 
-		txt.onload = function() {loader()};
-		lettering.onload = function() {loader()};
-		cheer.onloadeddata = function() {loader()};
-		crash.onloadeddata = function() {loader()};
-		scream.onloadeddata = function() {loader()};
-		servo.onloadeddata = function() {loader()};
-		teleport.onloadeddata = function() {loader()};
-		walk.onloadeddata = function() {loader()};
 		img.src = 'sprites.png';
 		txt.src = 'text.png';
 		lettering.src = 'lettering.png';
@@ -1158,6 +1221,16 @@ function runGame() {
 		servo.src = 'servo.mp3';
 		teleport.src = 'teleport.mp3';
 		walk.src = 'walk.mp3';
+		img.onload = function() {loader()}; 
+		txt.onload = function() {loader()};
+		lettering.onload = function() {loader()};
+		cheer.onloadeddata = function() {loader()};
+		crash.onloadeddata = function() {loader()};
+		scream.onloadeddata = function() {loader()};
+		servo.onloadeddata = function() {loader()};
+		teleport.onloadeddata = function() {loader()};
+		walk.onloadeddata = function() {loader()};
+		state = 'PLAYING';
 	}
 
 	function drawLoader() {
@@ -1180,10 +1253,10 @@ function runGame() {
 
 	function loader() {
 		load--;
-		console.info("LOADED FILE. Load: " + load);
+		//console.info("LOADED FILE. Load: " + load);
 		drawLoader();
 		if (load == 0) {
-			console.info("ALL FILES LOEADED");
+			//console.info("ALL FILES LOEADED");
 			status = statePostLoad;
 			update();
 		}
@@ -1211,7 +1284,7 @@ function runGame() {
 	var msPerFrame = 50;
 
 	window.requestAnimFrame = (function() {
-		return  window.requestAnimationFrame			||
+		return  window.requestAnimationFrame		||
 				window.webkitRequestAnimationFrame	||
 				window.mozRequestAnimationFrame		||
 				window.oRequestAnimationFrame		||
@@ -1227,7 +1300,7 @@ function runGame() {
 		if (acDelta > msPerFrame) {
 			acDelta = 0;
 			status.run();
-			console.info(status.id);
+			//console.info(status.id);
 		} else {
 			acDelta += delta;
 		}
