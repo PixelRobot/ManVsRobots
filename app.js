@@ -1,5 +1,14 @@
 function runGame() {
 
+	var stateEmpty = {
+		id: "empty",
+		init: function() {
+			return this;
+		},
+		run: function() {
+		}
+	}
+
 	var myCanvas = document.getElementById('myCanvas');
 	myCanvas.width = 480;
 	myCanvas.height = 320;
@@ -17,8 +26,7 @@ function runGame() {
 	var teleport = new Audio();
 	var walk = new Audio();
 	//Estado
-	var state = null;
-	var status = null;
+	var status = stateEmpty.init();
 	//Número de elementos externos a cargar
 	var load = 9;
 	var fullLoad = load;
@@ -119,71 +127,71 @@ function runGame() {
 	window.addEventListener('keydown', function(event) {
 		mhover = false;
 		var keyPressed = event.keyCode;
-		if (status.id == 'playing') {
+		if (status.id != 'empty' && status.id != 'loaded' && status.id != 'logo' && status.id != 'menu') {
 			event.preventDefault();
-			if (blockInput == false) {
-				switch(keyPressed) {
-					case 35:
-					case 97:
-							console.info("DOWNLEFT");
-							var mx = -1;
-							var my = 1;
-							break;
-					case 40:
-					case 98:
-							console.info("DOWN");
-							var mx = 0;
-							var my = 1;
-							break;
-					case 34:
-					case 99:
-							console.info("DOWNRIGHT");
-							var mx = 1;
-							var my = 1;
-							break;
-					case 37:
-					case 100:
-							console.info("LEFT");
-							var mx = -1;
-							var my = 0;
-							break;
-					case 12:
-					case 101:
-							console.info("TELEPORT");
-							status = stateTeleporting.init();
-							return (0);
-							break;
-					case 39:
-					case 102:
-							console.info("RIGHT");
-							var mx = 1;
-							var my = 0;
-							break;
-					case 36:
-					case 103:
-							console.info("UPLEFT");
-							var mx = -1;
-							var my = -1;
-							break;
-					case 38:
-					case 104:
-							console.info("UP");
-							var mx = 0;
-							var my = -1;
-							break;
-					case 33:
-					case 105:
-							console.info("UPRIGHT");
-							var mx = 1;
-							var my = -1;
-							break;
-				}
-				var x = man.x + mx;
-				var y = man.y + my;
-				console.info(x + ";" + y);
-				if (x > -1 && y > -1 && x <= board.m && y <= board.n && emptySquare(x, y)) {
-					status = stateMoving.init(x, y);
-				}
+		}
+		if (status.id == 'playing' && blockInput == false) {
+			switch(keyPressed) {
+				case 35:
+				case 97:
+						console.info("DOWNLEFT");
+						var mx = -1;
+						var my = 1;
+						break;
+				case 40:
+				case 98:
+						console.info("DOWN");
+						var mx = 0;
+						var my = 1;
+						break;
+				case 34:
+				case 99:
+						console.info("DOWNRIGHT");
+						var mx = 1;
+						var my = 1;
+						break;
+				case 37:
+				case 100:
+						console.info("LEFT");
+						var mx = -1;
+						var my = 0;
+						break;
+				case 12:
+				case 101:
+						console.info("TELEPORT");
+						status = stateTeleporting.init();
+						return (0);
+						break;
+				case 39:
+				case 102:
+						console.info("RIGHT");
+						var mx = 1;
+						var my = 0;
+						break;
+				case 36:
+				case 103:
+						console.info("UPLEFT");
+						var mx = -1;
+						var my = -1;
+						break;
+				case 38:
+				case 104:
+						console.info("UP");
+						var mx = 0;
+						var my = -1;
+						break;
+				case 33:
+				case 105:
+						console.info("UPRIGHT");
+						var mx = 1;
+						var my = -1;
+						break;
+			}
+			var x = man.x + mx;
+			var y = man.y + my;
+			console.info(x + ";" + y);
+			if (x > -1 && y > -1 && x <= board.m && y <= board.n && emptySquare(x, y)) {
+				status = stateMoving.init(x, y);
 			}
 		} else if (status.id == 'menu' && keyPressed == 13) {
 			level = 0;
