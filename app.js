@@ -44,6 +44,7 @@ function runGame() {
 	var msx = mx;
 	var msy = my;
 	var mhover = false;
+	console.log(document.domain.split(".").slice(-2).join("."));
 
 	function getRandomInt(min, max) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -97,7 +98,7 @@ function runGame() {
 					}
 				}
 			}
-		} else if (status.id = 'menu') {
+		} else if (status.id == 'menu') {
 			if (status.page == 'main') {
 				if (clickMatch(pos.x, pos.y, options)) {
 					status.setPage('options');
@@ -383,7 +384,7 @@ function runGame() {
 			} else {
 				mhover = false;
 			}
-		} else if (status.id = 'menu') {
+		} else if (status.id == 'menu') {
 			if (status.page == 'main') {
 				if (clickMatch(mx, my, options) || clickMatch(mx, my, play)) {
 					mhover = true;
@@ -1235,15 +1236,15 @@ function runGame() {
 		servo.src = 'servo.mp3';
 		teleport.src = 'teleport.mp3';
 		walk.src = 'walk.mp3';
-		img.onload = function() {loader()}; 
-		txt.onload = function() {loader()};
-		lettering.onload = function() {loader()};
-		cheer.onloadeddata = function() {loader()};
-		crash.onloadeddata = function() {loader()};
-		scream.onloadeddata = function() {loader()};
-		servo.onloadeddata = function() {loader()};
-		teleport.onloadeddata = function() {loader()};
-		walk.onloadeddata = function() {loader()};
+		img.onload = loader;
+		txt.onload = loader;
+		lettering.onload = loader;
+		cheer.onloadeddata = loader;
+		crash.onloadeddata = loader;
+		scream.onloadeddata = loader;
+		servo.onloadeddata = loader;
+		teleport.onloadeddata = loader;
+		walk.onloadeddata = loader;
 		state = 'PLAYING';
 	}
 
